@@ -1,0 +1,7 @@
+#include<stdio.h>
+int main()
+{
+    a = 5;
+    b = c + d;
+    int sum = 0;
+}
