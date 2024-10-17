@@ -1,0 +1,8 @@
+if (a == 4 )
+begin
+    if (c==d)    
+begin
+        a = b+ c;    
+end
+
+end
