@@ -1,7 +1,9 @@
 %{
 #include <stdio.h>
 int flag = 0;
-int current_state = 0;
+int b= 0;
+int lhs = 0;
+int rhs = 0;
 %}
 
 OPERATOR   [\+\-\*\/\%]
@@ -10,13 +12,21 @@ SEMI       ;
 EQUALS     =
 LPAREN     \(
 RPAREN     \)
-TERM       {LPAREN}{IDENTIFIER}{OPERATOR}{IDENTIFIER}{RPAREN}
-MULTIPLE   {LPAREN}{TERM}*{RPAREN}
-FULLTERM   ({IDENTIFIER}{OPERATOR})*({MULTIPLE})*({IDENTIFIER}{OPERATOR})*
+MULTIPLE   {IDENTIFIER}{OPERATOR}
+TERM       {IDENTIFIER}{OPERATOR}({IDENTIFIER}|{MULTIPLE}*)
+MULTIPLETERM {TERM}*{OPERATOR}{TERM}*
+BRACKETTERM ({LPAREN}{TERM}*{RPAREN})*
+
 
 %%
 
-{IDENTIFIER}{EQUALS}({IDENTIFIER}{SEMI} | 
+{LPAREN} { b++; }
+{RPAREN} { b--; }
+{IDENTIFIER}{EQUALS} { lhs=1;}
+{TERM} {}
+{SEMI} { rhs=1; }
+{MULTIPLETERM} {}
+{BRACKETTERM} {}
 . { 
     flag = 1; 
     return 0;
@@ -31,7 +41,7 @@ FULLTERM   ({IDENTIFIER}{OPERATOR})*({MULTIPLE})*({IDENTIFIER}{OPERATOR})*
 int main() {
     printf("\nEnter a string: ");
     yylex();
-    if (flag == 0) {
+    if (flag == 0 && lhs==1 && rhs==1 &&b==0) {
         printf("\nValid\n");
     } else {
         printf("\nInvalid\n");
